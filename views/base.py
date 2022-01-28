@@ -1,19 +1,23 @@
-import sys
+""" Define view """
 
+import sys
+from tabulate import tabulate
 class View:
-    # MENU
     def prompt_for_main_menu(self):
         """ prompt for main menu. """
-        print("""
-            ======   Main menu   ======
-            ---------------------------
-             t = Tournament
-             m = Modify rank of a player
-             q = Quit
-            """
-            )
+        print("\n==========   Menu   ==========")
+        controls = [
+            ["p", "Play a tournament"],
+            ["m", "Modify rank of a player"],
+            ["lt", "List of tournaments"],
+            ["ap", " List of all players sorted alphabetically"],
+            ["rp", "List of all players sorted by ranks"],
+            ["q", "Quit"],
+        ]
+        print(tabulate(controls, headers=["controls", "description"]))
+        choices = ['p', 'm', 'lt', 'ap', 'rp' ]    
         answer = input("choice: ")
-        if answer == "t" or answer == "m":
+        if answer in choices:
             return answer
         elif answer == "q": 
             return self.quit()
@@ -26,67 +30,26 @@ class View:
         """ Modify player rank. """
         pass
 
-    def prompt_for_tournament_menu(self):
-        """ Tournament menu. """
 
-        print("""
-            ======   Tournament menu   ======
-            ---------------------------------
-            p = Play a tournament
-            lt = List of tournaments
-            3 = List of all players
-            4 = Main menu
-            """
-            ) 
-        answer = input("choice: ")
-        if answer == "p" or answer == "lt":
-            return answer
-        elif answer == "3": 
-            return self.quit()
-        else: 
-            print("option not found")
-            return self.prompt_for_tournament_menu()  
-
-
-    def display_list_of_tournaments(self, tournaments):
-        print(
-            "======   List of tournaments   ======\
-             -------------------------------------"
-            )
-        for tournament in tournaments:
-            print(tournament)
+    # def display_list_of_tournaments(self, tournaments):
+    #     print(
+    #         "======   List of tournaments   ======\
+    #          -------------------------------------"
+    #         )
+    #     for tournament in tournaments:
+    #         print(tournament)
         
-        answer = input("Enter the name tournament to consult, or enter any keys to return to Tournament menu")
-        if answer in tournaments:
-            return self.prompt_for_specific_tournament(answer)
-            
-        else:
-            return self.prompt_for_tournament_menu() 
+    #     answer = input("Enter the name tournament to consult, or enter any keys to return to Tournament menu")
+    #     if answer in tournaments:
+    #         return self.prompt_for_specific_tournament(answer)
+    #     else:
+    #         return self.prompt_for_tournament_menu() 
     
 
     def quit(self):
+        """ Terminates the program """
         print("See you, bye!")
         sys.exit(0)     
-
-
-
-    def prompt_for_specific_tournament(self, choice):
-        print("""
-            ======   {choice} tournament   ======\
-             ---------------------------------\
-             
-            """
-            ) 
-        pass    
-
-    def prompt_for_player_menu(self):
-        print(
-            "======   Player menu   ======\
-             ---------------------------\
-             1 = List of all players\
-             2 = List of players per round\
-            "
-            )
 
 
     def prompt_create_tournament(self):
@@ -166,3 +129,29 @@ class View:
         print("\n=====   Tournament results   =====")
         for player in players:
             print("Player:",player.last_name, player.first_name, " Score:", player.score)
+
+
+    def display_all_tournaments(self, tournaments):
+        """ Display all tournaments details """
+        print("\n==========   List of tournaments   ==========")
+        if tournaments:
+            print(tabulate(tournaments, headers=["name", "location", "date", "time type", "description"]))
+        else:
+            print("\tList is empty")        
+
+
+    def display_all_players_sorted_by_alphabet(self, players):
+        """ Display all players details from the tournaments by alphabet """
+        print("\n==========   List of players by alphabet   ==========")
+        if players:
+            print(tabulate(players, headers=["last name", "first name", "birthdate", "gender", "score", "ranks"]))
+        else:
+            print("\t\tList is empty")  
+            
+
+    def display_all_players_sorted_by_ranks(self, players):
+        print("\n==========   List of players by ranks   ==========")
+        if players:
+            print(tabulate(players, reverse = True), headers=["last name","first name", "ranks"])
+        else:
+            print("\t\tList is empty")             

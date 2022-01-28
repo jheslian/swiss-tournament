@@ -13,31 +13,69 @@ class Application:
    def __init__(self, view):
       self.view = view
       self.current_tournament = None
-      
 
-   def controls(self, choice):
-      control_list = {
-         "t": self.view.prompt_for_tournament_menu(),
-         "p": self.launch_tournament(),
-      }
-      if choice in control_list:
-         return control_list[choice]
-
-   
 
    def run(self):
       """ start application """
-      main_menu = self.view.prompt_for_main_menu()
-      self.controls(main_menu)
+      while True:
+         self.controls()
 
 
+   def controls(self):
+
+         choice = self.get_menu()
+         control_list = {
+            "p": self.launch_tournament,
+            "lt": self.get_all_tournaments,       
+            "ap": self.get_all_players_sorted_by_alphabet, 
+            "rp": self.get_all_players_sorted_by_ranks,   
+         }    
+         control_list[choice]()
+         
 
    def launch_tournament(self):
       content = self.view.prompt_create_tournament()
       self.get_tournament_details(content)
-      players = self.get_players()
+      self.get_players()
       self.tournament_rounds()
    
+
+   def get_all_tournaments(self):
+      tournaments = []
+      for tmt in self.tournaments:
+         tmp = [tmt.name, tmt.location, tmt.tournament_date, tmt.time_type, tmt.description]
+         tournaments.append(tmp)
+      tournaments.sort()
+      return self.view.display_all_tournaments(tournaments)
+
+
+   def get_all_players_sorted_by_alphabet(self):
+      """ Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form  """
+      tmp_players = []
+      for tournament in self.tournaments:
+         tmp_players.extend(tournament.players)
+
+      players = []
+      for player in tmp_players:
+         tmp = [player.last_name, player.first_name, player.birthdate, player.gender, player.score, player.rank]
+         players.append(tmp)
+      players.sort()   
+      return self.view.display_all_players_sorted_by_alphabet(players)  
+
+
+   def get_all_players_sorted_by_ranks(self):
+      """ Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form  """
+      tmp_players = []
+      for tournament in self.tournaments:
+         tmp_players.extend(tournament.players)
+      tmp_players.sort(key = attrgetter('rank'), reverse = True)
+
+      players = []
+      for player in tmp_players:
+         tmp = [player.last_name, player.first_name, player.birthdate, player.gender, player.score, player.rank]
+         players.append(tmp)
+         
+      return self.view.display_all_players_sorted_by_alphabet(players)  
 
    
    def get_menu(self):
@@ -171,5 +209,8 @@ class Application:
       return pairs   
 
       
-      
-  
+   # def get_tournaments(self):
+   #    tournament_list = []
+   #    for tournament in self.tournaments:
+   #       tournament_list.append(tournament)
+   #    self.view.display_all_tournaments()   
