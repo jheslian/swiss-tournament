@@ -100,8 +100,8 @@ class View:
             print(f"\n=======   {key}   =======")
             print("----------------------------")
             for val in value:
-                print("Player:", val.player1.last_name, val.player1.first_name, " Score:", val.player1.tmp_score)
-                print("Player:", val.player2.last_name, val.player2.first_name, " Score:", val.player2.tmp_score)
+                print("Player:", val.pair[0].last_name, val.pair[0].first_name, " Score:", val.pair[0].tmp_score)
+                print("Player:", val.pair[1].last_name, val.pair[1].first_name, " Score:", val.pair[1].tmp_score)
 
     # ===================================   MATCH   ===================================#
     def display_matches(self, matches):
@@ -122,11 +122,7 @@ class View:
             return self.prompt_for_match_result(p1, p2)
         return result
 
-    def display_match_stats(self, match):
-        """ Display player with the score for the current match """
-        print(f"\n======   Match : {match.player1.last_name}  vs. {match.player2.last_name}   ======")
-        print("Player TTTTT: ", match.player1.last_name, match.player1.first_name, " Score: ", match.player1.tmp_score)
-        print("PlayerFFFFF : ", match.player2.last_name, match.player2.first_name, " Score: ", match.player2.tmp_score)
+
 
     # ===================================   STATIC METHODS  ===================================#
     @staticmethod
@@ -135,6 +131,13 @@ class View:
         print("See you, bye!")
         sys.exit(0)
 
+    # ===================================   MATCH   ===================================#
+    @staticmethod
+    def display_match_stats(match):
+        """ Display player with the score for the current match """
+        print(f"\n======   Match : {match.pair[0].last_name}  vs. {match.pair[1].last_name}   ======")
+        print("Player :", match.pair[0].last_name, match.pair[0].first_name, " Score: ", match.pair[0].tmp_score)
+        print("Player :", match.pair[1].last_name, match.pair[1].first_name, " Score: ", match.pair[1].tmp_score)
     # ===================================   PLAYER   ===================================#
     @staticmethod
     def get_player_name_update_rank():

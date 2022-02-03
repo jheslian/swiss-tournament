@@ -5,6 +5,7 @@ db = TinyDB('database/tournaments/tournament.json')
 tournaments_table = db.table('tournaments')
 
 
+
 def save(tournament):
     """ Add tournament to database """
     serialize_tournament = {
@@ -48,35 +49,30 @@ def add_players_id(tournament):
 def update_rounds(tournament):
     """ Add rounds to tournament """
     rounds = []
-
     for val in tournament.rounds:
-        print('r', val)
-        content = {
-            "name": val.name,
-            "match": [],
-            "start_datetime":  val.start_datetime,
-            "end_datetime":  val.end_datetime
-        }
-
-        print("pair",val.name, val.start_datetime, val.end_datetime)
-        print("mat", val.list_of_match)
-        for con in val.list_of_match:
-            for p in con:
-                print("sq",p, type(p))
-
-                print(p.player1.last_nam, p.player1.first_name, p.player1.score)
-
-
-                """print("ssss",p, p[0], type(p), type(p[0]) )
-                print(p.player[0].last_name, p.player1.first_name, p.player1.score)
-                match = {
-                    "last_name": p.player1.last_name,
-                    "first_name": p.player1.first_name,
-                    "score": p.player1.score
+        content = {"name": val.name, "matches": [], "start_datetime": val.start_datetime,
+                   "end_datetime": val.end_datetime}
+        matches = []
+        match = {}
+        for n, pair in enumerate(val.list_of_match[0]):
+            match["match"+str(n+1)] = {
+                "player1": {
+                    "last_name": pair[0].last_name,
+                    "first_name": pair[0].first_name,
+                    "score": pair[0].score
+                },
+                "player2": {
+                    "last_name": pair[1].last_name,
+                    "first_name": pair[1].first_name,
+                    "score": pair[1].score
                 }
-                content["match"].append(match)
-    return tournaments_table.update({"rounds": content}, where('name') == str(tournament.name))
-"""
+            }
+            matches.append(match)
+        content["matches"].append(match)
+        rounds.append(content)
+    return tournaments_table.update({"rounds": rounds}, where('name') == str(tournament.name))
+
+
 def get_rounds():
     """ Retrieve rounds of a tournament """
     pass

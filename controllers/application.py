@@ -90,8 +90,10 @@ class Application:
       
       This generates the matches of the rounds and the result of the tournament
       """
+
         while len(self.current_tournament.rounds) < self.current_tournament.no_of_rounds:
             round = Rounds(len(self.current_tournament.rounds) + 1)
+
             """ res = self.view.get_start_round()
             if res.lower() != "y":
                 return None"""
@@ -102,16 +104,20 @@ class Application:
                 """ generate pair for the first round"""
                 first_round_pairs = self.first_round_match_pairing()
                 self.get_score_of_matches_per_round(first_round_pairs, round)
+                print("ret", first_round_pairs)
                 round.list_of_match.append(first_round_pairs)
             else:
                 """ generate pair for the other rounds"""
                 other_rounds = self.other_round_match_pairing()
                 self.get_score_of_matches_per_round(other_rounds, round)
+                print("ret2", first_round_pairs)
+                round.list_of_match.append(other_rounds)
             round.end_round()
-            print("new, round", round.list_of_match)
             self.current_tournament.rounds.append(round)
             print("endtime", round.end_datetime)
+            print("play tournament", round.list_of_match)
         self.tournament_results()
+
         return self.current_tournament.rounds
 
     def add_tournament(self, content):
@@ -199,34 +205,34 @@ class Application:
         match_list = []
         self.view.display_matches(pairs)
         for pair in pairs:
-            match = Match()
-            match.player1 = pair[0]
-            match.player2 = pair[1]
-            match.player1.played_with.append(pair[1])
-            match.player2.played_with.append(pair[0])
-            match.player1.tmp_score = 0
-            match.player2.tmp_score = 0
-            match_result = self.view.prompt_for_match_result(match.player1, match.player2)
+            match = Match(pair[0], pair[1])
+
+            print("222zz", match)
+            match.pair[0].played_with.append(pair[1])
+            match.pair[1].played_with.append(pair[0])
+            match.pair[0].tmp_score = 0
+            match.pair[1].tmp_score = 0
+            match_result = self.view.prompt_for_match_result(match.pair[0], match.pair[1])
+
             """ Score: 
              winner: 1
              tie: 0.5 """
             if match_result is None:
-                match.player1.tmp_score = 0.5
-                match.player2.tmp_score = 0.5
-                match.player1.score += 0.5
-                match.player2.score += 0.5
-            if match_result == str(match.player1.last_name):
-                match.player1.tmp_score = 1
-                match.player1.score += 1
-            if match_result == str(match.player2.last_name):
-                match.player2.tmp_score = 1
-                match.player2.score += 1
+                match.pair[0].tmp_score = 0.5
+                match.pair[1].tmp_score = 0.5
+                match.pair[0].score += 0.5
+                match.pair[1].score += 0.5
+            if match_result == str(match.pair[0].last_name):
+                match.pair[0].tmp_score = 1
+                match.pair[1].score += 1
+            if match_result == str(match.pair[1].last_name):
+                match.pair[0].tmp_score = 1
+                match.pair[1].score += 1
             match_list.append(match)
             self.view.display_match_stats(match)
 
-        round.list_of_match.append(match_list)
         round_matches[str(round.name)] = match_list
-        #self.current_tournament.rounds.append(round_matches)
+        print("scoring,", match_list)
         self.view.display_round_result(round_matches)
 
     # ===================================   MATCH   ===================================#
@@ -247,6 +253,7 @@ class Application:
         playerlist2 = player_list[split:]
         pairs = list(zip(playerlist1, playerlist2))
         self.player_color_generator(pairs)
+        print("1st match", pairs)
         return pairs
 
     def other_round_match_pairing(self):
@@ -279,6 +286,7 @@ class Application:
                 j += 1
             i += 1
         self.player_color_generator(new_pairs)
+        print("other pair", new_pairs)
         return new_pairs
 
     # ===================================   STATIC METHODS   ===================================#
