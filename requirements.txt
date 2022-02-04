@@ -1,0 +1,16 @@
+flake8==4.0.1
+flake8-html==0.4.1
+importlib-metadata==4.10.1
+Jinja2==3.0.3
+MarkupSafe==2.0.1
+mccabe==0.6.1
+numpy==1.22.2
+pycodestyle==2.8.0
+pyflakes==2.4.0
+Pygments==2.11.2
+python-dateutil==2.8.2
+pytz==2021.3
+six==1.16.0
+tabulate==0.8.9
+tinydb==4.6.1
+zipp==3.7.0

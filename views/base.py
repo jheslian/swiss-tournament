@@ -1,7 +1,9 @@
 """ Define view """
 
 import sys
+import pandas as pd
 from tabulate import tabulate
+import json
 
 
 class View:
@@ -15,13 +17,16 @@ class View:
             ["p", "Play a tournament"],
             ["m", "Modify rank of a player"],
             ["lt", "List of tournaments"],
-            ["ap", " List of all players sorted alphabetically"],
+            ["lr", "List of rounds of a tournament"],
+            ["lm", "List of matchs of a tournament"],
+            ["lp", "List of players of a tournament"],
+            ["ap", "List of all players sorted alphabetically"],
             ["rp", "List of all players sorted by ranks"],
             ["ur", "Update player rank"],
             ["q", "Quit"],
         ]
         print(tabulate(controls, headers=["controls", "description"]))
-        choices = ['c', 'p', 'm', 'lt', 'ap', 'rp', 'ur']
+        choices = ['c', 'p', 'm', 'lt', 'lr', 'lm', 'lp', 'ap', 'rp', 'ur']
         answer = input("choice: ")
         if answer in choices:
             return answer
@@ -31,11 +36,15 @@ class View:
             print("option not found")
             return self.prompt_for_main_menu()
 
-
+    @staticmethod
+    def quit():
+        """ Terminates the program """
+        print("See you, bye!")
+        sys.exit(0)
 
     # ===================================   TOURNAMENT   ===================================#
-
-    def display_tournaments(self, tournaments):
+    @staticmethod
+    def display_tournaments(tournaments):
         """ Display tournaments details """
         print("\n==========   List of tournaments   ==========\n")
         if tournaments:
@@ -43,14 +52,14 @@ class View:
         else:
             print("\tList is empty")
 
-
-    def prompt_create_tournament(self):
+    @staticmethod
+    def prompt_create_tournament():
         """ Prompt for a tournament details """
         print("\n======   Add a tournament   ======")
         print("----------------------------------")
         name = input("Tournament name : ")
         location = input("Tournament location : ")
-        tournament_date = input("Tournament date : ")
+        tournament_date = input("Tournament date(mm-dd-yyy) : ")
         time_type = input("Tournament time type(bullet, blitz, rapid ) : ")
         description = input("Tournament description : ")
         details = {
@@ -67,34 +76,39 @@ class View:
             print(f"\t{key}: {val}")
         return details
 
-
-    def get_tournament_name(self, tournaments):
+    @staticmethod
+    def prompt_tournament_id(title, tournaments):
         """ Get the tournament to play """
-        print(f"\n======   Launch a tournament   ======")
+        print(f"\n======   {title}   ======")
         # print('r', tournaments, type(tournaments))
         if tournaments is None:
             return None
 
         print("Tournaments : ")
-        names = []
+        res = []
         for val in tournaments:
-            names.append(val['name'])
-            print(val['name'])
-        data = input("\nEnter tournament name : ")
+            tmp = [val.doc_id, val['name']]
+            res.append(tmp)
+
+        print(tabulate(res, headers=["id", "name"]))
+        data = input(f"\nEnter tournament id : ")
         if data is None:
             return None
-        return data
+        for tournament in res:
+            if int(data) == tournament[0]:
+                return tournament[0], tournament[1]
+        return
 
-
-
-    def display_tournament_result(self, players):
+    @staticmethod
+    def display_tournament_result(players):
         """ Display the players withe the total score of the tournament """
         print("\n=====   Tournament results   =====")
         for player in players:
             print("Player:", player.last_name, player.first_name, " Score:", player.score)
 
     # ===================================   ROUND   ===================================#
-    def display_round_result(self, round):
+    @staticmethod
+    def display_round_result(round):
         """ Display players with the result of each round """
         for key, value in round.items():
             print(f"\n=======   {key}   =======")
@@ -103,8 +117,19 @@ class View:
                 print("Player:", val.pair[0].last_name, val.pair[0].first_name, " Score:", val.pair[0].tmp_score)
                 print("Player:", val.pair[1].last_name, val.pair[1].first_name, " Score:", val.pair[1].tmp_score)
 
+    @staticmethod
+    def display_tournament_rounds(tournament_name, rounds):
+        """ Display rounds of tournament"""
+        print(f"\n=======    List of rounds for the tournament << {tournament_name} >>   =======")
+        res = []
+        for r in rounds:
+            tmp = [r['name'], r['start_datetime'], r['end_datetime']]
+            res.append(tmp)
+        print(tabulate(res, headers=["name", "start date time", "end date time"]))
+
     # ===================================   MATCH   ===================================#
-    def display_matches(self, matches):
+    @staticmethod
+    def display_matches(matches):
         print(f"\n======   Matches   ======")
         for p in matches:
             print(
@@ -122,22 +147,22 @@ class View:
             return self.prompt_for_match_result(p1, p2)
         return result
 
-
-
-    # ===================================   STATIC METHODS  ===================================#
-    @staticmethod
-    def quit():
-        """ Terminates the program """
-        print("See you, bye!")
-        sys.exit(0)
-
-    # ===================================   MATCH   ===================================#
     @staticmethod
     def display_match_stats(match):
         """ Display player with the score for the current match """
         print(f"\n======   Match : {match.pair[0].last_name}  vs. {match.pair[1].last_name}   ======")
         print("Player :", match.pair[0].last_name, match.pair[0].first_name, " Score: ", match.pair[0].tmp_score)
         print("Player :", match.pair[1].last_name, match.pair[1].first_name, " Score: ", match.pair[1].tmp_score)
+
+    @staticmethod
+    def display_tournament_matches(tournament_name, rounds):
+        """ Display matches of a tournament"""
+        print(f"\n=======    List of matches for the tournament << {tournament_name} >>   =======")
+        content = {}
+        for i in rounds:
+            content[i['name']] = i['matches'][0]
+        print(json.dumps(content, indent=4))
+
     # ===================================   PLAYER   ===================================#
     @staticmethod
     def get_player_name_update_rank():
@@ -188,19 +213,23 @@ class View:
         return details
 
     @staticmethod
-    def display_all_players_sorted_by_alphabet(players):
-        """ Display all players details from the tournaments by alphabet """
-        print("\n==========   List of players by alphabet   ==========")
+    def display_sorted_players(title, players):
+        """ Display all sorted players details from the tournaments"""
+        print(f"\n==========   {title}   ==========")
         if players:
             print(tabulate(players, headers=["last name", "first name", "birthdate", "gender", "score", "ranks"]))
         else:
             print("\t\tList is empty")
 
-    @staticmethod
-    def display_all_players_sorted_by_ranks(players):
-        """ Display all players details from the tournaments by ranks """
-        print("\n==========   List of players by ranks   ==========")
+    """@staticmethod
+    def display_all_players_sorted_by_ranks(title, players):
+       
+        print(f"\n==========   {title}   ==========")
         if players:
             print(tabulate(players, reverse=True), headers=["last name", "first name", "ranks"])
         else:
-            print("\t\tList is empty")
+            print("\t\tList is empty")"""
+
+    def display_tournament_players(t_name, players):
+        """ Display players of a tournament """
+        print("\n==========   List of players by ranks   ==========")

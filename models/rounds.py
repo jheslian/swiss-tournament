@@ -23,10 +23,10 @@ class Rounds:
 
     def start_round(self):
         """ date and time when round is created """
-        self.start_datetime = datetime.now().strftime('%d-%m-Y, %H:%M:%S')
+        self.start_datetime = datetime.now().strftime('%d-%m-%Y, %H:%M:%S')
         return self.start_datetime
 
     def end_round(self):
         """ date and time when round is terminated """
-        self.end_datetime = datetime.now().strftime('%d-%m-Y, %H:%M:%S')
+        self.end_datetime = datetime.now().strftime('%d-%m-%Y, %H:%M:%S')
         return self.end_datetime

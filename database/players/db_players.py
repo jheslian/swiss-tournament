@@ -5,6 +5,9 @@ db = TinyDB('database/players/player.json')
 players_table = db.table('players')
 
 
+# players_table.truncate()
+
+
 def save(player):
     serialize_player = {
         "last_name": player.last_name,
@@ -35,7 +38,6 @@ def update_rank(p_id, p_new_rank):
 
 def search_player(name):
     """ Search players """
-    print("name", name)
     res = players_table.search(where('last_name') == name)
     if not res:
         return None
@@ -46,3 +48,10 @@ def get_players():
     """ Retrieve all tournaments """
     return players_table.all()
 
+
+def get_match_players(players_id):
+    """ Retrieve players from a tournament """
+    players = []
+    for p_id in players_id:
+        players.append(players_table.get(doc_id=p_id))
+    return players
