@@ -1,13 +1,14 @@
 """ Entry point. """
 
-from controllers.application import Application
+from controllers.base import Controller
 from views.base import View
 
 
 def main():
-   view = View()
-   app = Application(view)
-   app.run()
-  
+    view = View()
+    app = Controller(view)
+    app.run()
+
+
 if __name__ == "__main__":
-   main()
+    main()

@@ -12,7 +12,7 @@ import random
 import sys, os
 
 
-class Application:
+class Controller:
     tournaments = []
 
     def __init__(self, view):
@@ -358,7 +358,6 @@ class Application:
 
     @staticmethod
     def get_all_players(players_dict):
-        print("DICT", players_dict)
         """ Retrieve all players"""
         players = []
         for player in players_dict:
