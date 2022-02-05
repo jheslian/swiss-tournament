@@ -1,5 +1,4 @@
 """ Define view """
-
 import sys
 from tabulate import tabulate
 import json
@@ -7,7 +6,6 @@ from datetime import datetime
 
 
 class View:
-
     # ===================================   MENU   ===================================#
     def prompt_for_main_menu(self):
         """ prompt for main menu. """
@@ -56,17 +54,21 @@ class View:
         """ Prompt for a tournament details """
         print("\n======   Add a tournament   ======")
         print("----------------------------------")
-        name = input("Tournament name : ")
-        location = input("Tournament location : ")
-        tournament_date = input("Tournament date(dd-mm-yyyy) : ")
-        time_type = input("Tournament time type(bullet, blitz, rapid ) : ")
-        description = input("Tournament description : ")
+        name = input("Name : ")
+        location = input("Location : ")
+        tournament_date = input("Date(dd-mm-yyyy) : ")
+        time_type = input("Time type(bullet, blitz, rapid ) : ")
+        description = input("Description : ")
+        no_of_players = int(input("Number of players : "))
+        no_of_rounds = int(input("Number of rounds : "))
         details = {
             'name': name,
             'location': location,
             'tournament_date': tournament_date,
             'time_type': time_type,
             'description': description,
+            'no_of_players': no_of_players,
+            'no_of_rounds': no_of_rounds
         }
         if not details:
             return None
@@ -85,10 +87,11 @@ class View:
         print("Tournaments : ")
         res = []
         for val in tournaments:
-            tmp = [val.doc_id, val['name']]
+            tmp = [val.doc_id, val['name'], val['location'], val['tournament_date'],
+                   val['time_type'], val['no_of_players']]
             res.append(tmp)
 
-        print(tabulate(res, headers=["id", "name"]))
+        print(tabulate(res, headers=["id", "name", "location", "date", "time type", "no. of players"]))
         data = input(f"\nEnter tournament id : ")
         if data is None:
             return None
@@ -203,7 +206,6 @@ class View:
             except ValueError:
                 print(f"Not a valid number!")
 
-
         print(f"Player {p_id} rank's has been changed to {p_rank}")
         return p_id, p_rank
 
@@ -218,8 +220,9 @@ class View:
             birthdate = input("Birthdate(dd-mm-yyyy) : ")
             gender = input("Gender(f/m) : ")
             rank = input("Rank number : ")
+            if not rank:
+                rank = 0
             errors = []
-            print('FE', gender)
             if gender not in ["f", "m"]:
                 errors.append(self.custom_errors("g"))
             if not first_name or not last_name:
@@ -250,6 +253,7 @@ class View:
         dict_errors = {
             "n": "Last name or first name is empty.",
             "g": "Gender must be f or m.",
+            "r": "Invalid rank"
         }
         return dict_errors[err]
 
@@ -262,15 +266,3 @@ class View:
         else:
             print("\t\tList is empty")
 
-    """@staticmethod
-    def display_all_players_sorted_by_ranks(title, players):
-       
-        print(f"\n==========   {title}   ==========")
-        if players:
-            print(tabulate(players, reverse=True), headers=["last name", "first name", "ranks"])
-        else:
-            print("\t\tList is empty")"""
-
-    def display_tournament_players(t_name, players):
-        """ Display players of a tournament """
-        print("\n==========   List of players by ranks   ==========")

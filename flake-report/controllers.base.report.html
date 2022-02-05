@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+   <head>
+      <title>flake8 violations: controllers/base.py</title>
+      <meta http-equiv="Content-Type" value="text/html; charset=UTF-8">
+      <link rel="stylesheet" href="styles.css">
+<script>
+function bindHandler(link) {
+   var code = link.getAttribute('data-code');
+   var key = location.pathname + '#' + code;
+
+   var ul = link.parentNode.querySelector('.details');
+   if (sessionStorage[key] != 'open') {
+      ul.style.display = 'none';
+   }
+   link.addEventListener('click', function (event) {
+      if (!ul.style.display || ul.style.display == 'none') {
+         ul.style.display = 'block';
+         sessionStorage[key] = 'open';
+      } else {
+         ul.style.display = 'none';
+         sessionStorage[key] = 'closed';
+      }
+   });
+}
+
+window.addEventListener('DOMContentLoaded', function () {
+   var links = document.querySelectorAll('#index > li > a');
+   for (var i = 0; i < links.length; i++) {
+      bindHandler(links[i]);
+   }
+});
+</script>
+   </head>
+   <body>
+      <div id="masthead" class="sev-1"></div>
+      <div id="page">
+         <p id="srclink">
+            <a title="View full annotated source"
+               href="controllers.base.source.html">
+               <img src="file.svg" alt="&#x2261;">
+            </a></p>
+         <h1>
+            <a href="index.html">
+               <img src="back.svg" alt="&#x2B05;">
+               controllers/base.py
+            </a>
+         </h1>
+
+         <ul id="index">
+         
+         <li>
+            <a data-code="F541">
+               <span class="count sev-1">
+                  11
+               </span>
+               <strong>F541:</strong> f-string is missing placeholders
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="controllers.base.source.html#l58">
+                  <tt><i>58</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">There are no tournaments!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l61">
+                  <tt><i>61</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Tournament not found!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l106">
+                  <tt><i>106</i>                     <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Exit tournament! Goodbye!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l205">
+                  <tt><i>205</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Input is not a digit!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l208">
+                  <tt><i>208</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">No tournaments found!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l212">
+                  <tt><i>212</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">This tournament is not yet played!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l268">
+                  <tt><i>268</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Input is not a digit!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l270">
+                  <tt><i>270</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">No tournaments found!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l282">
+                  <tt><i>282</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Input is not a digit!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l285">
+                  <tt><i>285</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">No tournaments found!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l289">
+                  <tt><i>289</i>             <span class="k">return</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">This tournament is not yet played!&quot;</span><span class="p">)</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E501">
+               <span class="count sev-2">
+                  30
+               </span>
+               <strong>E501:</strong> line too long (91 > 79 characters)
+               
+                  (and 18 similar)
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <p>Line too long (91 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l42">
+                  <tt><i>42</i>     <span class="c1"># ===================================   CONTROLS   ===================================#</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (93 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l47">
+                  <tt><i>47</i>     <span class="c1"># ===================================   TOURNAMENT   ===================================#</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (99 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l56">
+                  <tt><i>56</i>         <span class="n">tournament</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">prompt_tournament_id</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db_tournament</span><span class="o">.</span><span class="n">get_tournaments_to_play</span><span class="p">())</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (80 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l73">
+                  <tt><i>73</i>                 <span class="bp">self</span><span class="o">.</span><span class="n">current_tournament</span><span class="o">.</span><span class="n">tournament_date</span> <span class="o">=</span> <span class="n">val</span><span class="p">[</span><span class="s2">&quot;tournament_date&quot;</span><span class="p">]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (110 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l85">
+                  <tt><i>85</i>             <span class="n">val</span> <span class="o">=</span> <span class="p">[</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;location&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;tournament_date&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;time_type&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]]</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (89 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l94">
+                  <tt><i>94</i>         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_tournament</span><span class="o">.</span><span class="n">rounds</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_tournament</span><span class="o">.</span><span class="n">no_of_rounds</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (81 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l102">
+                  <tt><i>102</i>                 <span class="n">q2</span> <span class="o">=</span> <span class="s2">&quot;Are you sure you want to terminate the tournament(y/n)? : &quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (90 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l150">
+                  <tt><i>150</i>     <span class="c1"># ===================================   PLAYERS   ===================================#</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (91 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l153">
+                  <tt><i>153</i>         <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_tournament</span><span class="o">.</span><span class="n">players</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_tournament</span><span class="o">.</span><span class="n">no_of_players</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (110 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l157">
+                  <tt><i>157</i>             <span class="n">player</span> <span class="o">=</span> <span class="n">Player</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="s1">&#39;last_name&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;first_name&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;birthdate&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;gender&#39;</span><span class="p">],</span> <span class="n">res</span><span class="p">[</span><span class="s1">&#39;rank&#39;</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (119 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l166">
+                  <tt><i>166</i>         <span class="sd">&quot;&quot;&quot; Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form  &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (119 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l173">
+                  <tt><i>173</i>         <span class="sd">&quot;&quot;&quot; Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form  &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (87 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l175">
+                  <tt><i>175</i>         <span class="n">sorted_players</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">sorted_players</span><span class="p">:</span> <span class="n">sorted_players</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (98 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l190">
+                  <tt><i>190</i>             <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">player</span><span class="o">.</span><span class="n">doc_id</span><span class="p">,</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;last_name&#39;</span><span class="p">],</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;first_name&#39;</span><span class="p">],</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;birth_date&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (95 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l203">
+                  <tt><i>203</i>             <span class="n">tournament</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">prompt_tournament_id</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db_tournament</span><span class="o">.</span><span class="n">get_tournaments</span><span class="p">())</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (83 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l216">
+                  <tt><i>216</i>         <span class="n">title1</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Tournament </span><span class="si">{</span><span class="n">tournament</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> :  List of player sorted by alphabet&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (80 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l222">
+                  <tt><i>222</i>         <span class="n">title2</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Tournament </span><span class="si">{</span><span class="n">tournament</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> :  List of player sorted by ranks&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (92 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l223">
+                  <tt><i>223</i>         <span class="n">players_by_alphabet</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">sorted_players</span><span class="p">:</span> <span class="n">sorted_players</span><span class="p">[</span><span class="mi">5</span><span class="p">],</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (88 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l226">
+                  <tt><i>226</i>     <span class="c1"># ===================================   ROUND   ===================================#</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (114 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l228">
+                  <tt><i>228</i>         <span class="sd">&quot;&quot;&quot; Generate matches from the pairing, get the scores and display the result at the end of each match  &quot;&quot;&quot;</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (90 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l240">
+                  <tt><i>240</i>             <span class="n">match_result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">prompt_for_match_result</span><span class="p">(</span><span class="n">match</span><span class="o">.</span><span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">match</span><span class="o">.</span><span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (95 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l266">
+                  <tt><i>266</i>             <span class="n">tournament</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">prompt_tournament_id</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db_tournament</span><span class="o">.</span><span class="n">get_tournaments</span><span class="p">())</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (88 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l275">
+                  <tt><i>275</i>     <span class="c1"># ===================================   MATCH   ===================================#</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (95 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l280">
+                  <tt><i>280</i>             <span class="n">tournament</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">view</span><span class="o">.</span><span class="n">prompt_tournament_id</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">db_tournament</span><span class="o">.</span><span class="n">get_tournaments</span><span class="p">())</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (89 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l295">
+                  <tt><i>295</i> <span class="sd">      Sorts the list according to the player&#39;s rank and pair the first half to other half</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (81 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l315">
+                  <tt><i>315</i> <span class="sd">      Sorts the list according to the player&#39;s score and pair them with the total</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (120 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l334">
+                  <tt><i>334</i>                     <span class="k">if</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">played_with</span> <span class="ow">and</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">played_with</span> <span class="ow">and</span> <span class="n">player</span> <span class="o">==</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> \</tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (102 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l335">
+                  <tt><i>335</i>                             <span class="ow">and</span> <span class="n">pair</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">players_with_pair</span> <span class="ow">and</span> <span class="n">pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">players_with_pair</span><span class="p">:</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (97 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l345">
+                  <tt><i>345</i>     <span class="c1"># ===================================   STATIC METHODS   ===================================#</span></tt>
+               </a>
+            </li><li>
+               
+               <p>Line too long (83 > 79 characters):</p>
+               
+               <a href="controllers.base.source.html#l364">
+                  <tt><i>364</i>             <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">player</span><span class="p">[</span><span class="s1">&#39;last_name&#39;</span><span class="p">],</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;first_name&#39;</span><span class="p">],</span> <span class="n">player</span><span class="p">[</span><span class="s1">&#39;birth_date&#39;</span><span class="p">],</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W291">
+               <span class="count sev-2">
+                  3
+               </span>
+               <strong>W291:</strong> trailing whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="controllers.base.source.html#l242">
+                  <tt><i>242</i>             <span class="sd">&quot;&quot;&quot; Score: </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l296">
+                  <tt><i>296</i> <span class="sd">      example: list = A, B, C, D, E, F, G, H </span></tt>
+               </a>
+            </li><li>
+               
+               <a href="controllers.base.source.html#l297">
+                  <tt><i>297</i> <span class="sd">               pair result = A vs E, B vs F, C vs G, D vs H </span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="E401">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>E401:</strong> multiple imports on one line
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="controllers.base.source.html#l12">
+                  <tt><i>12</i> <span class="kn">import</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">os</span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         <li>
+            <a data-code="W293">
+               <span class="count sev-2">
+                  1
+               </span>
+               <strong>W293:</strong> blank line contains whitespace
+               
+            </a>
+            <ul class="details">
+            <li>
+               
+               <a href="controllers.base.source.html#l91">
+                  <tt><i>91</i> <span class="sd">      </span></tt>
+               </a>
+            </li>
+            </ul>
+         </li>
+         
+         </ul>
+      </div>
+   </body>
+</html>

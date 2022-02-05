@@ -9,7 +9,8 @@ import database.tournaments.db_tournament as db_tournament
 import database.players.db_players as db_player
 import itertools
 import random
-import sys, os
+import sys
+import os
 
 
 class Controller:
@@ -25,7 +26,7 @@ class Controller:
             self.controls()
 
     def controls(self):
-        choice = self.get_menu()
+        choice = self.get_menu
         control_list = {
             "c": self.create_tournament,
             "p": self.launch_tournament,
@@ -40,8 +41,9 @@ class Controller:
         control_list[choice]()
 
     # ===================================   CONTROLS   ===================================#
+    @property
     def get_menu(self):
-        """ Control menu """
+        """Control menu"""
         return self.view.prompt_for_main_menu()
 
     # ===================================   TOURNAMENT   ===================================#
@@ -73,6 +75,7 @@ class Controller:
                 self.current_tournament.tournament_date = val["tournament_date"]
                 self.current_tournament.description = val["description"]
                 self.current_tournament.no_of_rounds = val["no_of_rounds"]
+                self.current_tournament.no_of_players = val["no_of_players"]
                 self.current_tournament.playing = True
                 return val.doc_id
         return None
@@ -134,8 +137,11 @@ class Controller:
         tournament.tournament_date = content['tournament_date']
         tournament.time_type = content['time_type']
         tournament.description = content['description']
+        tournament.no_of_players = content['no_of_players']
+        tournament.no_of_rounds = content['no_of_rounds']
+        print("no players: ", tournament.no_of_players)
         self.current_tournament = tournament
-        self.tournaments.append(self.current_tournament)
+        # self.tournaments.append(self.current_tournament)
         db_tournament.save(tournament)
         return self.current_tournament
 
@@ -231,8 +237,6 @@ class Controller:
         self.view.display_matches(pairs)
         for pair in pairs:
             match = Match(pair[0], pair[1])
-
-            print("222zz", match)
             match.pair[0].played_with.append(pair[1])
             match.pair[1].played_with.append(pair[0])
             match.pair[0].tmp_score = 0
@@ -306,7 +310,6 @@ class Controller:
         playerlist2 = player_list[split:]
         pairs = list(zip(playerlist1, playerlist2))
         self.player_color_generator(pairs)
-        print("1st match", pairs)
         return pairs
 
     def other_round_match_pairing(self):
@@ -323,23 +326,18 @@ class Controller:
             player_list.append(" ")
 
         new_pairs = []
+        paired_players = []
         players_with_pair = []
         for i, player in enumerate(player_list):
             for j, pair in enumerate(itertools.combinations(player_list, 2)):
-                if j == 0 and i == 0:
+                if pair[1] not in pair[0].played_with and pair[0] not in pair[1].played_with and player == pair[0] \
+                        and pair not in paired_players and pair[0] not in players_with_pair and pair[1] not in players_with_pair:
+                    print("pair to add B : ", pair)
+                    paired_players.append(pair)
+                    new_pairs.append(pair)
                     players_with_pair.append(pair[0])
                     players_with_pair.append(pair[1])
-                    new_pairs.append(pair)
-                else:
-                    if pair[1] not in pair[0].played_with and pair[0] not in pair[1].played_with and player == pair[0] \
-                            and pair[0] not in players_with_pair and pair[1] not in players_with_pair:
-                        players_with_pair.append(pair[0])
-                        players_with_pair.append(pair[1])
-                        new_pairs.append(pair)
-                j += 1
-            i += 1
         self.player_color_generator(new_pairs)
-        print("other pair", new_pairs)
         return new_pairs
 
     # ===================================   STATIC METHODS   ===================================#
@@ -347,7 +345,6 @@ class Controller:
     def player_color_generator(pairs):
         """ Player's color """
         for pair in pairs:
-            print("in", pair)
             res = random.choice(["WHITE", "BLACK"])
             pair[0].color = res
             if res == "WHITE":

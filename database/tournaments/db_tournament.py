@@ -3,9 +3,7 @@ from tinydb import TinyDB, Query, where
 Tournament = Query()
 db = TinyDB('database/tournaments/tournament.json')
 tournaments_table = db.table('tournaments')
-
-
-#tournaments_table.truncate()
+# tournaments_table.truncate()
 
 
 def save(tournament):
@@ -17,6 +15,7 @@ def save(tournament):
         "time_type": tournament.time_type,
         "description": tournament.description,
         "no_of_rounds": tournament.no_of_rounds,
+        "no_of_players": tournament.no_of_players,
         "rounds": tournament.rounds,
         "players_id": tournament.players_ids,
         "playing": tournament.playing,

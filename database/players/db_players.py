@@ -4,8 +4,6 @@ from datetime import datetime
 Player = Query()
 db = TinyDB('database/players/player.json')
 players_table = db.table('players')
-
-
 # players_table.truncate()
 
 

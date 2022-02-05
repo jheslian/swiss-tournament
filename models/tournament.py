@@ -26,6 +26,7 @@ class Tournament:
         self.no_of_players = 8
         self.playing = False
 
+
     def __str__(self):
         """ Str print """
         return self.name
@@ -33,6 +34,4 @@ class Tournament:
     def __repr__(self):
         """Used in print."""
         return str(self)
-
-
 
