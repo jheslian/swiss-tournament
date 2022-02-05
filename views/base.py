@@ -1,9 +1,9 @@
 """ Define view """
 
 import sys
-import pandas as pd
 from tabulate import tabulate
 import json
+from datetime import datetime
 
 
 class View:
@@ -15,7 +15,6 @@ class View:
         controls = [
             ["c", "Create a tournament"],
             ["p", "Play a tournament"],
-            ["m", "Modify rank of a player"],
             ["lt", "List of tournaments"],
             ["lr", "List of rounds of a tournament"],
             ["lm", "List of matchs of a tournament"],
@@ -26,7 +25,7 @@ class View:
             ["q", "Quit"],
         ]
         print(tabulate(controls, headers=["controls", "description"]))
-        choices = ['c', 'p', 'm', 'lt', 'lr', 'lm', 'lp', 'ap', 'rp', 'ur']
+        choices = ['c', 'p', 'lt', 'lr', 'lm', 'lp', 'ap', 'rp', 'ur']
         answer = input("choice: ")
         if answer in choices:
             return answer
@@ -59,7 +58,7 @@ class View:
         print("----------------------------------")
         name = input("Tournament name : ")
         location = input("Tournament location : ")
-        tournament_date = input("Tournament date(mm-dd-yyy) : ")
+        tournament_date = input("Tournament date(dd-mm-yyyy) : ")
         time_type = input("Tournament time type(bullet, blitz, rapid ) : ")
         description = input("Tournament description : ")
         details = {
@@ -80,7 +79,6 @@ class View:
     def prompt_tournament_id(title, tournaments):
         """ Get the tournament to play """
         print(f"\n======   {title}   ======")
-        # print('r', tournaments, type(tournaments))
         if tournaments is None:
             return None
 
@@ -97,7 +95,7 @@ class View:
         for tournament in res:
             if int(data) == tournament[0]:
                 return tournament[0], tournament[1]
-        return
+        return data
 
     @staticmethod
     def display_tournament_result(players):
@@ -107,6 +105,13 @@ class View:
             print("Player:", player.last_name, player.first_name, " Score:", player.score)
 
     # ===================================   ROUND   ===================================#
+    @staticmethod
+    def prompt_start_round(question, round_no):
+        """ Get input to start the rounds """
+        print(f"\n=====   Round {str(round_no)}   =====")
+        res = input(question)
+        return res
+
     @staticmethod
     def display_round_result(round):
         """ Display players with the result of each round """
@@ -179,38 +184,74 @@ class View:
         """ Get player id and rank """
         if players:
             print(tabulate(players, headers=["id", "last name", "first name", "birthdate", "gender", "score", "ranks"]))
-        p_id = input("\nEnter player id to update : ")
+        try:
+            p_id = int(input("\nEnter player id to update : "))
+        except ValueError:
+            print(f"Value entered is not a number!")
+            return View.get_player_id_rank_to_update(players)
         ids = []
         for p in players:
-            print('loop', p[0])
             ids.append(p[0])
-        if int(p_id) not in ids:
+        if p_id not in ids:
             print(f"Id << {p_id} >>  is not valid from selection")
             return None
-        p_rank = input(f"Enter new rank of player {p_id} : ")
+        while True:
+            try:
+                p_rank = int(input(f"Enter new rank of player {p_id} : "))
+                if str(p_rank).isdigit():
+                    break
+            except ValueError:
+                print(f"Not a valid number!")
+
+
         print(f"Player {p_id} rank's has been changed to {p_rank}")
         return p_id, p_rank
 
-    @staticmethod
-    def prompt_for_player():
+    def prompt_for_player(self):
         """Prompt to add player."""
         print(f"\n======   Add a player   ======")
         print("---------------------------------------")
-        last_name = input("Last name : ")
-        first_name = input("First name : ")
-        birthdate = input("Birthdate : ")
-        gender = input("Gender : ")
-        rank = input("Rank number : ")
-        details = {
-            'last_name': last_name,
-            'first_name': first_name,
-            'birthdate': birthdate,
-            'gender': gender,
-            'rank': rank
-        }
+
+        try:
+            last_name = input("Last name : ")
+            first_name = input("First name : ")
+            birthdate = input("Birthdate(dd-mm-yyyy) : ")
+            gender = input("Gender(f/m) : ")
+            rank = input("Rank number : ")
+            errors = []
+            print('FE', gender)
+            if gender not in ["f", "m"]:
+                errors.append(self.custom_errors("g"))
+            if not first_name or not last_name:
+                errors.append(self.custom_errors("n"))
+            if errors:
+                print("\nErrors:")
+                for err in errors:
+                    print("* ", err)
+                return self.prompt_for_player()
+            bdate = datetime.strptime(birthdate, "%d-%m-%Y")
+            details = {
+                'last_name': last_name,
+                'first_name': first_name,
+                'birthdate': bdate,
+                'gender': gender,
+                'rank': int(rank)
+            }
+        except Exception as e:
+            print(e)
+            return self.prompt_for_player()
+
         if not details:
             return None
         return details
+
+    @staticmethod
+    def custom_errors(err):
+        dict_errors = {
+            "n": "Last name or first name is empty.",
+            "g": "Gender must be f or m.",
+        }
+        return dict_errors[err]
 
     @staticmethod
     def display_sorted_players(title, players):

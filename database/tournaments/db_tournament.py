@@ -5,7 +5,7 @@ db = TinyDB('database/tournaments/tournament.json')
 tournaments_table = db.table('tournaments')
 
 
-# tournaments_table.truncate()
+#tournaments_table.truncate()
 
 
 def save(tournament):
@@ -24,9 +24,11 @@ def save(tournament):
     tournaments_table.insert(serialize_tournament)
 
 
-def start_playing(t_id):
+def start_playing(condition, t_id):
     """ Modify state of tournament and update playing state """
-    return tournaments_table.update({'playing': True}, doc_ids=[t_id])
+    if condition is False:
+        return tournaments_table.update({'playing': condition, 'players_id': []}, doc_ids=[t_id])
+    return tournaments_table.update({'playing': condition}, doc_ids=[t_id])
 
 
 def get_tournaments():

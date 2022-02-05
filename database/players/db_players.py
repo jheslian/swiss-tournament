@@ -1,4 +1,5 @@
 from tinydb import TinyDB, Query, where
+from datetime import datetime
 
 Player = Query()
 db = TinyDB('database/players/player.json')
@@ -8,11 +9,15 @@ players_table = db.table('players')
 # players_table.truncate()
 
 
+def date_parser(date):
+    return datetime.strftime(date, "%d-%m-%Y")
+
+
 def save(player):
     serialize_player = {
         "last_name": player.last_name,
         "first_name": player.first_name,
-        "birth_date": player.birthdate,
+        "birth_date": date_parser(player.birthdate),
         "gender": player.gender,
         "rank": player.rank,
         "score": player.score,
@@ -30,7 +35,7 @@ def update_score(player):
 
 def update_rank(p_id, p_new_rank):
     """ Update player rank """
-    res = players_table.update({"rank": p_new_rank}, doc_ids=[int(p_id)])
+    res = players_table.update({"rank": int(p_new_rank)}, doc_ids=[int(p_id)])
     if res is None:
         return None
     return res
@@ -39,6 +44,7 @@ def update_rank(p_id, p_new_rank):
 def search_player(name):
     """ Search players """
     res = players_table.search(where('last_name') == name)
+    print('re', res)
     if not res:
         return None
     return res

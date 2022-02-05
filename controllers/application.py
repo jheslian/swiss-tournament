@@ -9,6 +9,7 @@ import database.tournaments.db_tournament as db_tournament
 import database.players.db_players as db_player
 import itertools
 import random
+import sys, os
 
 
 class Application:
@@ -55,22 +56,18 @@ class Application:
         tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments_to_play())
         if tournament is None:
             return print(f"\tThere are no tournaments!")
-        res = self.get_created_tournament(tournament)
-        print('rrr', res)
+        res = self.get_created_tournament(tournament[0])
         if res is None:
             return print(f"\tTournament not found!")
-        db_tournament.start_playing(int(res))
         self.get_players()
-        self.play_tournament()
+        db_tournament.start_playing(True, int(res))
+        self.play_tournament(int(res))
 
     def get_created_tournament(self, choice):
         """ Retrieve tournament to play"""
         tournaments = db_tournament.get_tournaments_to_play()
-        print("crea", choice, type(choice))
         for val in tournaments:
-
             if choice == val.doc_id:
-
                 self.current_tournament.name = val["name"]
                 self.current_tournament.location = val["location"]
                 self.current_tournament.tournament_date = val["tournament_date"]
@@ -89,21 +86,28 @@ class Application:
             tournaments.append(val)
         self.view.display_tournaments(tournaments)
 
-    def play_tournament(self):
+    def play_tournament(self, t_no):
         """ Main part of tournament
       
       This generates the matches of the rounds and the result of the tournament
       """
-
         while len(self.current_tournament.rounds) < self.current_tournament.no_of_rounds:
-            round = Rounds(len(self.current_tournament.rounds) + 1)
-
-            """ res = self.view.get_start_round()
-            if res.lower() != "y":
-                return None"""
+            round_no = len(self.current_tournament.rounds) + 1
+            round = Rounds(round_no)
+            q1 = "Would you like to start this round(y/n)? : "
+            res = self.view.prompt_start_round(q1, round_no)
+            if res is None:
+                continue
+            elif res.lower() != "y":
+                q2 = "Are you sure you want to terminate the tournament(y/n)? : "
+                confirm = self.view.prompt_start_round(q2, round_no)
+                if confirm.lower() == "y":
+                    db_tournament.start_playing(False, t_no)
+                    print(f"Exit tournament! Goodbye!")
+                    os.execv(sys.executable, ['python'] + sys.argv)
+                else:
+                    None
             round.start_round()
-            print("start time",round.start_datetime)
-
             if str(round.name) == "Round 1":
                 """ generate pair for the first round"""
                 first_round_pairs = self.first_round_match_pairing()
@@ -118,8 +122,6 @@ class Application:
                 round.list_of_match.append(other_rounds)
             round.end_round()
             self.current_tournament.rounds.append(round)
-            print("endtime", round.end_datetime)
-            print("play tournament", round.list_of_match)
         self.tournament_results()
 
         return self.current_tournament.rounds
@@ -140,9 +142,7 @@ class Application:
     def tournament_results(self):
         """ Results of the tournament """
         results = self.current_tournament.players
-        print("ending")
         for player in results:
-            print("score", player.score)
             db_player.update_score(player)
         db_tournament.update_rounds(self.current_tournament)
         return self.view.display_tournament_result(results)
@@ -151,15 +151,10 @@ class Application:
     def get_players(self):
         """Get some players."""
         while len(self.current_tournament.players) < self.current_tournament.no_of_players:
-            content = self.view.prompt_for_player()
-            if not content:
+            res = self.view.prompt_for_player()
+            if not res:
                 return None
-            player = Player()
-            player.last_name = content['last_name']
-            player.first_name = content['first_name']
-            player.birthdate = content['birthdate']
-            player.gender = content['gender']
-            player.rank = content['rank']
+            player = Player(res['last_name'], res['first_name'], res['birthdate'], res['gender'], res['rank'])
             player_id = db_player.save(player)
             player.id = player_id
             self.current_tournament.players_ids.append(player_id)
@@ -182,13 +177,14 @@ class Application:
         return self.view.display_sorted_players(title, sorted_players)
 
     def get_player_to_update(self):
+        """ Update player's ranks"""
         p_name = self.view.get_player_name_update_rank()
         if p_name is None:
             return None
-        print("searching for", p_name)
 
         result_players = db_player.search_player(p_name)
-        print("res", result_players)
+        if result_players is None:
+            return print("\tPlayer not found")
         players = []
         for player in result_players:
             tmp = [player.doc_id, player['last_name'], player['first_name'], player['birth_date'],
