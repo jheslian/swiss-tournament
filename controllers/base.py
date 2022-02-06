@@ -1,4 +1,4 @@
-""" Define application """
+"""Define application"""
 
 from operator import attrgetter
 from models.matchs import Match
@@ -43,7 +43,7 @@ class Controller:
     # ===================================   CONTROLS   ===================================#
     @property
     def get_menu(self):
-        """Control menu"""
+        """ Control menu """
         return self.view.prompt_for_main_menu()
 
     # ===================================   TOURNAMENT   ===================================#
@@ -91,7 +91,6 @@ class Controller:
 
     def play_tournament(self, t_no):
         """ Main part of tournament
-      
       This generates the matches of the rounds and the result of the tournament
       """
         while len(self.current_tournament.rounds) < self.current_tournament.no_of_rounds:
@@ -139,9 +138,7 @@ class Controller:
         tournament.description = content['description']
         tournament.no_of_players = content['no_of_players']
         tournament.no_of_rounds = content['no_of_rounds']
-        print("no players: ", tournament.no_of_players)
         self.current_tournament = tournament
-        # self.tournaments.append(self.current_tournament)
         db_tournament.save(tournament)
         return self.current_tournament
 
@@ -243,7 +240,7 @@ class Controller:
             match.pair[1].tmp_score = 0
             match_result = self.view.prompt_for_match_result(match.pair[0], match.pair[1])
 
-            """ Score: 
+            """ Score:
              winner: 1
              tie: 0.5 """
             if match_result is None:
@@ -297,8 +294,8 @@ class Controller:
         """ Match pairing for the first round and if score of all players are equal
 
       Sorts the list according to the player's rank and pair the first half to other half
-      example: list = A, B, C, D, E, F, G, H 
-               pair result = A vs E, B vs F, C vs G, D vs H 
+      example: list = A, B, C, D, E, F, G, H
+               pair result = A vs E, B vs F, C vs G, D vs H
       """
         player_list = self.current_tournament.players
         player_list.sort(key=attrgetter('rank'), reverse=True)
@@ -331,8 +328,8 @@ class Controller:
         for i, player in enumerate(player_list):
             for j, pair in enumerate(itertools.combinations(player_list, 2)):
                 if pair[1] not in pair[0].played_with and pair[0] not in pair[1].played_with and player == pair[0] \
-                        and pair not in paired_players and pair[0] not in players_with_pair and pair[1] not in players_with_pair:
-                    print("pair to add B : ", pair)
+                        and pair not in paired_players and pair[0] not in players_with_pair and pair[1] \
+                        not in players_with_pair:
                     paired_players.append(pair)
                     new_pairs.append(pair)
                     players_with_pair.append(pair[0])

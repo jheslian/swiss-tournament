@@ -186,7 +186,8 @@ class View:
     def get_player_id_rank_to_update(players):
         """ Get player id and rank """
         if players:
-            print(tabulate(players, headers=["id", "last name", "first name", "birthdate", "gender", "score", "ranks"]))
+            print(tabulate(players, headers=["id", "last name", "first name", "birthdate",
+                                             "gender", "score", "ranks"]))
         try:
             p_id = int(input("\nEnter player id to update : "))
         except ValueError:
@@ -265,4 +266,3 @@ class View:
             print(tabulate(players, headers=["last name", "first name", "birthdate", "gender", "score", "ranks"]))
         else:
             print("\t\tList is empty")
-

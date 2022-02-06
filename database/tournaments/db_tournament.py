@@ -37,7 +37,7 @@ def get_tournaments():
 
 def get_tournaments_to_play():
     """ Available tournaments to play """
-    res = tournaments_table.search(where('playing') == False)
+    res = tournaments_table.search(where('playing') is False)
     if not res:
         return None
     return res
