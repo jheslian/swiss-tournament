@@ -132,6 +132,3 @@ dmypy.json
 #pycharm
 .idea/
 idea/
-
-#db
-*.json

@@ -25,6 +25,7 @@ class Tournament:
         self.description = None
         self.no_of_players = 8
         self.playing = False
+        self.finished = False
 
     def __str__(self):
         """ Str print """

@@ -18,6 +18,8 @@ def save(player):
         "birth_date": date_parser(player.birthdate),
         "gender": player.gender,
         "rank": player.rank,
+        "played_with": player.played_with,
+        "tmp_score": player.tmp_score,
         "score": player.score,
     }
     return players_table.insert(serialize_player)

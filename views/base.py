@@ -72,7 +72,7 @@ class View:
         }
         if not details:
             return None
-        print(f"\nTournament created: ")
+        print("\nTournament created: ")
         for key, val in details.items():
             print(f"\t{key}: {val}")
         return details
@@ -92,8 +92,8 @@ class View:
             res.append(tmp)
 
         print(tabulate(res, headers=["id", "name", "location", "date", "time type", "no. of players"]))
-        data = input(f"\nEnter tournament id : ")
-        if data is None:
+        data = input("\nEnter tournament id : ")
+        if data is None or not data.isdigit():
             return None
         for tournament in res:
             if int(data) == tournament[0]:
@@ -138,7 +138,7 @@ class View:
     # ===================================   MATCH   ===================================#
     @staticmethod
     def display_matches(matches):
-        print(f"\n======   Matches   ======")
+        print("\n======   Matches   ======")
         for p in matches:
             print(
                 f"{p[0].last_name} {p[0].first_name} {p[0].color} vs. {p[1].last_name} {p[1].first_name} {p[1].color}")
@@ -147,7 +147,7 @@ class View:
         """ Prompt to get match result """
         print(f"\n======   Match : {p1.last_name} {p1.first_name} vs. {p2.last_name} {p2.first_name}  ======")
         option = [str(p1.last_name), str(p2.last_name)]
-        result = input(f"Last name of the winner for this match(press ENTER for tie) : ")
+        result = input("Last name of the winner for this match(press ENTER for tie) : ")
         if not result:
             return None
         elif result not in option:
@@ -175,7 +175,7 @@ class View:
     @staticmethod
     def get_player_name_update_rank():
         """ Get player name """
-        print(f"\n======   Update player rank   ======")
+        print("\n======   Update player rank   ======")
         print("---------------------------------------")
         name = input("\nEnter player last name : ")
         if name is None:
@@ -191,7 +191,7 @@ class View:
         try:
             p_id = int(input("\nEnter player id to update : "))
         except ValueError:
-            print(f"Value entered is not a number!")
+            print("Value entered is not a number!")
             return View.get_player_id_rank_to_update(players)
         ids = []
         for p in players:
@@ -205,14 +205,14 @@ class View:
                 if str(p_rank).isdigit():
                     break
             except ValueError:
-                print(f"Not a valid number!")
+                print("Not a valid number!")
 
         print(f"Player {p_id} rank's has been changed to {p_rank}")
         return p_id, p_rank
 
     def prompt_for_player(self):
         """Prompt to add player."""
-        print(f"\n======   Add a player   ======")
+        print("\n======   Add a player   ======")
         print("---------------------------------------")
 
         try:

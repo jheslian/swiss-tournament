@@ -1,6 +1,7 @@
 """Define application"""
 
 from operator import attrgetter
+from typing import List, Tuple
 from models.matchs import Match
 from models.tournament import Tournament
 from models.players import Player
@@ -54,13 +55,14 @@ class Controller:
 
     def launch_tournament(self):
         """ Play the tournament """
+
         title = "Launch a tournament"
         tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments_to_play())
         if tournament is None:
-            return print(f"\tThere are no tournaments!")
+            return print("\tThere are no tournaments!")
         res = self.get_created_tournament(tournament[0])
         if res is None:
-            return print(f"\tTournament not found!")
+            return print("\tTournament not found!")
         self.get_players()
         db_tournament.start_playing(True, int(res))
         self.play_tournament(int(res))
@@ -104,28 +106,26 @@ class Controller:
                 q2 = "Are you sure you want to terminate the tournament(y/n)? : "
                 confirm = self.view.prompt_start_round(q2, round_no)
                 if confirm.lower() == "y":
-                    db_tournament.start_playing(False, t_no)
-                    print(f"Exit tournament! Goodbye!")
+                    # db_tournament.start_playing(False, t_no)
+                    print("Exit tournament! Goodbye!")
                     os.execv(sys.executable, ['python'] + sys.argv)
-                else:
-                    None
+
             round.start_round()
             if str(round.name) == "Round 1":
-                """ generate pair for the first round"""
+                """ generate pair for the first round """
                 first_round_pairs = self.first_round_match_pairing()
                 self.get_score_of_matches_per_round(first_round_pairs, round)
-                print("ret", first_round_pairs)
                 round.list_of_match.append(first_round_pairs)
+
             else:
-                """ generate pair for the other rounds"""
+                """ generate pair for the other rounds """
                 other_rounds = self.other_round_match_pairing()
                 self.get_score_of_matches_per_round(other_rounds, round)
-                print("ret2", first_round_pairs)
                 round.list_of_match.append(other_rounds)
             round.end_round()
             self.current_tournament.rounds.append(round)
         self.tournament_results()
-
+        self.current_tournament.finished = True
         return self.current_tournament.rounds
 
     def add_tournament(self, content):
@@ -205,14 +205,14 @@ class Controller:
             title = "Search tournament"
             tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments())
         except ValueError:
-            return print(f"\tInput is not a digit!")
+            return print("\tInput is not a digit!")
 
         if tournament is None:
-            return print(f"\tNo tournaments found!")
+            return print("\tNo tournaments found!")
 
         res = db_tournament.get_players(tournament[0])
         if res is None:
-            return print(f"\tThis tournament is not yet played!")
+            return print("\tThis tournament is not yet played!")
         players = db_player.get_match_players(res)
 
         # sorted by alphabet
@@ -266,9 +266,9 @@ class Controller:
             title = "Search tournament"
             tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments())
         except ValueError:
-            return print(f"\tInput is not a digit!")
+            return print("\tInput is not a digit!")
         if tournament is None:
-            return print(f"\tNo tournaments found!")
+            return print("\tNo tournaments found!")
 
         res = db_tournament.get_rounds(tournament[0])
         self.view.display_tournament_rounds(tournament[1], res)
@@ -280,15 +280,16 @@ class Controller:
             title = "Search tournament"
             tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments())
         except ValueError:
-            return print(f"\tInput is not a digit!")
+            return print("\tInput is not a digit!")
 
         if tournament is None:
-            return print(f"\tNo tournaments found!")
+            return print("\tNo tournaments found!")
 
         res = db_tournament.get_rounds(tournament[0])
         if res is None:
-            return print(f"\tThis tournament is not yet played!")
+            return print("\tThis tournament is not yet played!")
         self.view.display_tournament_matches(tournament[1], res)
+
 
     def first_round_match_pairing(self):
         """ Match pairing for the first round and if score of all players are equal
@@ -305,22 +306,30 @@ class Controller:
         split = int(len(player_list) / 2)
         playerlist1 = player_list[:split]
         playerlist2 = player_list[split:]
-        pairs = list(zip(playerlist1, playerlist2))
-        self.player_color_generator(pairs)
-        return pairs
+        new_pairs = list(zip(playerlist1, playerlist2))
+        self.player_color_generator(new_pairs)
+        return new_pairs
 
     def other_round_match_pairing(self):
         """ Match pairing for the other rounds
 
-      Sorts the list according to the player's score and pair them with the total
-      score almost or equally the same as them
-      example: list = A, B, C, D, E, F, G, H
-           pair result = A vs B, C vs D, E vs F, G vs H
-      """
+        Sorts the list according to the player's score or by ranks and pair them with the total
+        score almost or equally the same as them
+        example: list = A, B, C, D, E, F, G, H
+               pair result = A vs B, C vs D, E vs F, G vs H
+        """
+        players = db_player.get_match_players(self.current_tournament.players_ids)
+        tie = False
+        scores = []
+        for player in players:
+            if len(scores) > 0 and player['tmp_score'] in scores:
+                tie = True
+                break
+            scores.append(player['tmp_score'])
         player_list = self.current_tournament.players
         player_list.sort(key=attrgetter('score'), reverse=True)
-        if len(player_list) % 2 != 0:
-            player_list.append(" ")
+        if tie is True:
+            player_list.sort(key=attrgetter('rank'), reverse=True)
 
         new_pairs = []
         paired_players = []
@@ -370,7 +379,3 @@ class Controller:
             tmp = [r['name'], r['start_datetime'], r['end_datetime']]
             rounds.append(tmp)
         return rounds
-
-    @staticmethod
-    def tournament_matches():
-        pass
