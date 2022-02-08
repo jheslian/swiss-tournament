@@ -1,7 +1,6 @@
 """Define application"""
 
 from operator import attrgetter
-from typing import List, Tuple
 from models.matchs import Match
 from models.tournament import Tournament
 from models.players import Player
@@ -23,8 +22,19 @@ class Controller:
 
     def run(self):
         """ start application """
-        while True:
-            self.controls()
+
+        try:
+            while True:
+                self.controls()
+        except KeyboardInterrupt:
+            print("\n\nProgram has been aborted! Data may have been lost, Goodbye!")
+            sys.exit(0)
+
+    # ===================================   CONTROLS   ===================================#
+    @property
+    def get_menu(self):
+        """ Control menu """
+        return self.view.prompt_for_main_menu()
 
     def controls(self):
         choice = self.get_menu
@@ -41,12 +51,6 @@ class Controller:
         }
         control_list[choice]()
 
-    # ===================================   CONTROLS   ===================================#
-    @property
-    def get_menu(self):
-        """ Control menu """
-        return self.view.prompt_for_main_menu()
-
     # ===================================   TOURNAMENT   ===================================#
     def create_tournament(self):
         """ Create a tournament """
@@ -60,25 +64,22 @@ class Controller:
         tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments_to_play())
         if tournament is None:
             return print("\tThere are no tournaments!")
-        res = self.get_created_tournament(tournament[0])
-        if res is None:
+        t_id = self.get_created_tournament(tournament[0])
+        if t_id is None:
             return print("\tTournament not found!")
-        self.get_players()
-        db_tournament.start_playing(True, int(res))
-        self.play_tournament(int(res))
+        if len(self.current_tournament.players) < self.current_tournament.no_of_players:
+            self.get_players(int(t_id))
+        if self.current_tournament.finished is False and self.current_tournament.playing is True:
+            self.play_tournament(int(t_id))
 
     def get_created_tournament(self, choice):
         """ Retrieve tournament to play"""
         tournaments = db_tournament.get_tournaments_to_play()
         for val in tournaments:
             if choice == val.doc_id:
-                self.current_tournament.name = val["name"]
-                self.current_tournament.location = val["location"]
-                self.current_tournament.tournament_date = val["tournament_date"]
-                self.current_tournament.description = val["description"]
-                self.current_tournament.no_of_rounds = val["no_of_rounds"]
-                self.current_tournament.no_of_players = val["no_of_players"]
-                self.current_tournament.playing = True
+                tournament = db_tournament.deserialize(val.doc_id)
+                self.current_tournament = tournament
+                db_tournament.start_playing(val.doc_id)
                 return val.doc_id
         return None
 
@@ -91,10 +92,10 @@ class Controller:
             tournaments.append(val)
         self.view.display_tournaments(tournaments)
 
-    def play_tournament(self, t_no):
+    def play_tournament(self, t_id):
         """ Main part of tournament
-      This generates the matches of the rounds and the result of the tournament
-      """
+        This generates the matches of the rounds and the result of the tournament
+        """
         while len(self.current_tournament.rounds) < self.current_tournament.no_of_rounds:
             round_no = len(self.current_tournament.rounds) + 1
             round = Rounds(round_no)
@@ -110,7 +111,8 @@ class Controller:
                     print("Exit tournament! Goodbye!")
                     os.execv(sys.executable, ['python'] + sys.argv)
 
-            round.start_round()
+            round.start()
+
             if str(round.name) == "Round 1":
                 """ generate pair for the first round """
                 first_round_pairs = self.first_round_match_pairing()
@@ -122,11 +124,17 @@ class Controller:
                 other_rounds = self.other_round_match_pairing()
                 self.get_score_of_matches_per_round(other_rounds, round)
                 round.list_of_match.append(other_rounds)
-            round.end_round()
+            round.terminate()
             self.current_tournament.rounds.append(round)
+            db_tournament.update_rounds(t_id, round)
         self.tournament_results()
-        self.current_tournament.finished = True
+        self.tournament_ended()
+        db_tournament.ended(t_id)
         return self.current_tournament.rounds
+
+    def tournament_ended(self):
+        self.current_tournament.finished = True
+        self.current_tournament.playing = False
 
     def add_tournament(self, content):
         """ create tournament """
@@ -145,15 +153,14 @@ class Controller:
     def tournament_results(self):
         """ Results of the tournament """
         results = self.current_tournament.players
-        for player in results:
-            db_player.update_score(player)
-        db_tournament.update_rounds(self.current_tournament)
+        """for player in results:
+            db_player.update_score(player)"""
         return self.view.display_tournament_result(results)
 
     # ===================================   PLAYERS   ===================================#
-    def get_players(self):
+    def get_players(self, t_id):
         """Get some players."""
-        while len(self.current_tournament.players) < self.current_tournament.no_of_players:
+        while len(self.current_tournament.players_ids) < self.current_tournament.no_of_players:
             res = self.view.prompt_for_player()
             if not res:
                 return None
@@ -162,7 +169,7 @@ class Controller:
             player.id = player_id
             self.current_tournament.players_ids.append(player_id)
             self.current_tournament.players.append(player)
-        db_tournament.add_players_id(self.current_tournament)
+        db_tournament.add_players_id(t_id, self.current_tournament)
         return self.current_tournament.players
 
     def get_all_players_sorted_by_alphabet(self):
@@ -255,6 +262,8 @@ class Controller:
                 match.pair[0].tmp_score = 1
                 match.pair[1].score += 1
             match_list.append(match)
+            db_player.update_score(match.pair[0])
+            db_player.update_score(match.pair[1])
             self.view.display_match_stats(match)
 
         round_matches[str(round.name)] = match_list
@@ -289,7 +298,6 @@ class Controller:
         if res is None:
             return print("\tThis tournament is not yet played!")
         self.view.display_tournament_matches(tournament[1], res)
-
 
     def first_round_match_pairing(self):
         """ Match pairing for the first round and if score of all players are equal
@@ -367,7 +375,6 @@ class Controller:
             tmp = [player['last_name'], player['first_name'], player['birth_date'],
                    player['gender'], player['score'], player['rank']]
             players.append(tmp)
-
         return players
 
     @staticmethod

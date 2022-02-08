@@ -2,7 +2,8 @@
 
 
 class Player:
-    def __init__(self, last_name: str, first_name: str, birthdate: str, gender: str, rank=0, color: str = None):
+    def __init__(self, last_name: str = None, first_name: str = None, birthdate: str = None,
+                 gender: str = None, rank=0, color: str = None):
         """ Player constructor """
         self.last_name = last_name
         self.first_name = first_name

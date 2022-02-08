@@ -49,18 +49,21 @@ class View:
         else:
             print("\tList is empty")
 
-    @staticmethod
-    def prompt_create_tournament():
+    def prompt_create_tournament(self):
         """ Prompt for a tournament details """
         print("\n======   Add a tournament   ======")
         print("----------------------------------")
-        name = input("Name : ")
-        location = input("Location : ")
-        tournament_date = input("Date(dd-mm-yyyy) : ")
-        time_type = input("Time type(bullet, blitz, rapid ) : ")
-        description = input("Description : ")
-        no_of_players = int(input("Number of players : "))
-        no_of_rounds = int(input("Number of rounds : "))
+        try:
+            name = input("Name : ")
+            location = input("Location : ")
+            tournament_date = input("Date(dd-mm-yyyy) : ")
+            time_type = input("Time type(bullet, blitz, rapid ) : ")
+            description = input("Description : ")
+            no_of_players = int(input("Number of players : "))
+            no_of_rounds = int(input("Number of rounds : "))
+        except ValueError as err:
+            print("Error: ", err)
+            return self.prompt_create_tournament()
         details = {
             'name': name,
             'location': location,
@@ -130,9 +133,12 @@ class View:
         """ Display rounds of tournament"""
         print(f"\n=======    List of rounds for the tournament << {tournament_name} >>   =======")
         res = []
-        for r in rounds:
-            tmp = [r['name'], r['start_datetime'], r['end_datetime']]
-            res.append(tmp)
+        if rounds is None:
+            return print("This tournament has not yet started!")
+        for t_round in rounds:
+            for k, v in t_round.items():
+                tmp = [v[0]['name'], v[0]['start_datetime'], v[0]['end_datetime']]
+                res.append(tmp)
         print(tabulate(res, headers=["name", "start date time", "end date time"]))
 
     # ===================================   MATCH   ===================================#
@@ -167,8 +173,9 @@ class View:
         """ Display matches of a tournament"""
         print(f"\n=======    List of matches for the tournament << {tournament_name} >>   =======")
         content = {}
-        for i in rounds:
-            content[i['name']] = i['matches'][0]
+        for t_round in rounds:
+            for k, v in t_round.items():
+                content[v[0]['name']] = v[0]['matches'][0]
         print(json.dumps(content, indent=4))
 
     # ===================================   PLAYER   ===================================#
@@ -197,7 +204,7 @@ class View:
         for p in players:
             ids.append(p[0])
         if p_id not in ids:
-            print(f"Id << {p_id} >>  is not valid from selection")
+            print(f"Error: Id << {p_id} >>  is not valid from selection")
             return None
         while True:
             try:
@@ -205,7 +212,7 @@ class View:
                 if str(p_rank).isdigit():
                     break
             except ValueError:
-                print("Not a valid number!")
+                print("Error: Not a valid number!")
 
         print(f"Player {p_id} rank's has been changed to {p_rank}")
         return p_id, p_rank
@@ -241,8 +248,8 @@ class View:
                 'gender': gender,
                 'rank': int(rank)
             }
-        except Exception as e:
-            print(e)
+        except Exception as err:
+            print("Error", err)
             return self.prompt_for_player()
 
         if not details:
