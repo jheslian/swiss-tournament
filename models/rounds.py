@@ -1,8 +1,6 @@
 """ Define rounds. """
 
-from typing import List
 from datetime import datetime
-from models.matchs import Match
 
 
 class Rounds:

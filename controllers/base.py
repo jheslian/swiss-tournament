@@ -1,4 +1,4 @@
-"""Define application"""
+""" Define controllers """
 
 from operator import attrgetter
 from models.matchs import Match
@@ -14,6 +14,7 @@ import os
 
 
 class Controller:
+    """ Class that controls of the app """
     tournaments = []
 
     def __init__(self, view):
@@ -33,10 +34,15 @@ class Controller:
     # ===================================   CONTROLS   ===================================#
     @property
     def get_menu(self):
-        """ Control menu """
+        """ Control menu
+
+        Returns:
+            str: chosen from the option
+        """
         return self.view.prompt_for_main_menu()
 
     def controls(self):
+        """ Controls of the app that calls the action to perform """
         choice = self.get_menu
         control_list = {
             "c": self.create_tournament,
@@ -58,7 +64,7 @@ class Controller:
         self.add_tournament(content)
 
     def launch_tournament(self):
-        """ Play the tournament """
+        """ Play the tournament by adding the players and storing the result of each match """
 
         title = "Launch a tournament"
         tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments_to_play())
@@ -72,11 +78,18 @@ class Controller:
         if self.current_tournament.finished is False and self.current_tournament.playing is True:
             self.play_tournament(int(t_id))
 
-    def get_created_tournament(self, choice):
-        """ Retrieve tournament to play"""
+    def get_created_tournament(self, t_id):
+        """ Retrieve the tournament to play
+
+        Args:
+            t_id (int): choice of id from user input
+
+        Returns:
+            int: tournament id that match on the database
+        """
         tournaments = db_tournament.get_tournaments_to_play()
         for val in tournaments:
-            if choice == val.doc_id:
+            if t_id == val.doc_id:
                 tournament = db_tournament.deserialize(val.doc_id)
                 self.current_tournament = tournament
                 db_tournament.start_playing(val.doc_id)
@@ -84,7 +97,7 @@ class Controller:
         return None
 
     def get_all_tournaments(self):
-        """ Retrieve all tournaments """
+        """ Retrieve all tournaments to display """
         result = db_tournament.get_tournaments()
         tournaments = []
         for res in result:
@@ -94,7 +107,7 @@ class Controller:
 
     def play_tournament(self, t_id):
         """ Main part of tournament
-        This generates the matches of the rounds and the result of the tournament
+        This generates the matches of the rounds and the result of the tournament or discontinue the tournament
         """
         while len(self.current_tournament.rounds) < self.current_tournament.no_of_rounds:
             round_no = len(self.current_tournament.rounds) + 1
@@ -107,7 +120,6 @@ class Controller:
                 q2 = "Are you sure you want to terminate the tournament(y/n)? : "
                 confirm = self.view.prompt_start_round(q2, round_no)
                 if confirm.lower() == "y":
-                    # db_tournament.start_playing(False, t_no)
                     print("Exit tournament! Goodbye!")
                     os.execv(sys.executable, ['python'] + sys.argv)
 
@@ -128,38 +140,47 @@ class Controller:
             self.current_tournament.rounds.append(round)
             db_tournament.update_rounds(t_id, round)
         self.tournament_results()
-        self.tournament_ended()
         db_tournament.ended(t_id)
         return self.current_tournament.rounds
 
-    def tournament_ended(self):
-        self.current_tournament.finished = True
-        self.current_tournament.playing = False
-
     def add_tournament(self, content):
-        """ create tournament """
+        """ Create a tournament
+
+        Args:
+            content (dict): details from user input
+
+        Returns:
+            tournament obj: object created
+        """
         tournament = Tournament()
         tournament.name = content['name']
         tournament.location = content['location']
         tournament.tournament_date = content['tournament_date']
         tournament.time_type = content['time_type']
         tournament.description = content['description']
-        tournament.no_of_players = content['no_of_players']
-        tournament.no_of_rounds = content['no_of_rounds']
+        if content['no_of_players']:
+            tournament.no_of_players = content['no_of_players']
+        if content['no_of_rounds']:
+            tournament.no_of_rounds = content['no_of_rounds']
         self.current_tournament = tournament
         db_tournament.save(tournament)
         return self.current_tournament
 
     def tournament_results(self):
-        """ Results of the tournament """
+        """ Results of the tournament to display """
         results = self.current_tournament.players
-        """for player in results:
-            db_player.update_score(player)"""
         return self.view.display_tournament_result(results)
 
     # ===================================   PLAYERS   ===================================#
     def get_players(self, t_id):
-        """Get some players."""
+        """ Add players to play a tournament
+
+        Args:
+            t_id (int): id of the tournament to play
+
+        Returns:
+            list: players to be added to the tournament
+        """
         while len(self.current_tournament.players_ids) < self.current_tournament.no_of_players:
             res = self.view.prompt_for_player()
             if not res:
@@ -169,26 +190,27 @@ class Controller:
             player.id = player_id
             self.current_tournament.players_ids.append(player_id)
             self.current_tournament.players.append(player)
-        db_tournament.add_players_id(t_id, self.current_tournament)
+        db_tournament.add_players_id(t_id, self.current_tournament.players_ids)
         return self.current_tournament.players
 
     def get_all_players_sorted_by_alphabet(self):
-        """ Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form  """
+        """ Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form """
         sorted_players = self.get_all_players(db_player.get_players())
         sorted_players.sort()
         title = "List of players by alphabet"
-        return self.view.display_sorted_players(title, sorted_players)
+        self.view.display_sorted_players(title, sorted_players)
 
     def get_all_players_sorted_by_ranks(self):
         """ Retrieve data of all players in all tournaments, convert to list and sort it to use it in tabular form  """
         sorted_players = self.get_all_players(db_player.get_players())
         sorted_players.sort(key=lambda sorted_players: sorted_players[5], reverse=True)
         title = "List of players by ranks"
-        return self.view.display_sorted_players(title, sorted_players)
+        self.view.display_sorted_players(title, sorted_players)
 
     def get_player_to_update(self):
-        """ Update player's ranks"""
-        p_name = self.view.get_player_name_update_rank()
+        """ Display certain players that match the name of the desired played and
+        retrieve the player to update the rank """
+        p_name = self.view.get_player_name()
         if p_name is None:
             return None
 
@@ -207,7 +229,7 @@ class Controller:
         db_player.update_rank(res[0], res[1])
 
     def get_tournament_players(self):
-        """ Retrieve/display players of a tournament """
+        """ Retrieve and display players of a tournament in alphabetically and sorted by ranks  """
         try:
             title = "Search tournament"
             tournament = self.view.prompt_tournament_id(title, db_tournament.get_tournaments())
@@ -235,7 +257,8 @@ class Controller:
 
     # ===================================   ROUND   ===================================#
     def get_score_of_matches_per_round(self, pairs, round):
-        """ Generate matches from the pairing, get the scores and display the result at the end of each match  """
+        """ Generate matches from the pairing, get the winner of the match and
+        display the result at the end of each match  """
         round_matches = {}
         match_list = []
         self.view.display_matches(pairs)
@@ -302,10 +325,14 @@ class Controller:
     def first_round_match_pairing(self):
         """ Match pairing for the first round and if score of all players are equal
 
-      Sorts the list according to the player's rank and pair the first half to other half
-      example: list = A, B, C, D, E, F, G, H
+        Sorts the list according to the player's rank and pair the first half to other half
+        example: list = A, B, C, D, E, F, G, H
                pair result = A vs E, B vs F, C vs G, D vs H
-      """
+
+        Returns:
+            list: pairs of match generated to play ont the next round
+
+        """
         player_list = self.current_tournament.players
         player_list.sort(key=attrgetter('rank'), reverse=True)
 
@@ -325,6 +352,9 @@ class Controller:
         score almost or equally the same as them
         example: list = A, B, C, D, E, F, G, H
                pair result = A vs B, C vs D, E vs F, G vs H
+
+        Returns:
+            list: pairs of match generated to play ont the next round
         """
         players = db_player.get_match_players(self.current_tournament.players_ids)
         tie = False
@@ -357,7 +387,14 @@ class Controller:
     # ===================================   STATIC METHODS   ===================================#
     @staticmethod
     def player_color_generator(pairs):
-        """ Player's color """
+        """ Generates player's color for the match
+
+        Args:
+            pairs (list): pair of players for the matches of a round
+
+        Returns:
+            list: pair of player with their color for the match
+        """
         for pair in pairs:
             res = random.choice(["WHITE", "BLACK"])
             pair[0].color = res
@@ -369,7 +406,14 @@ class Controller:
 
     @staticmethod
     def get_all_players(players_dict):
-        """ Retrieve all players"""
+        """ Retrieve all players and converts to list to display
+
+        Args:
+            players_dict (dict): players in a dictionnary to convert
+
+        Returns:
+            list: converted list of players
+        """
         players = []
         for player in players_dict:
             tmp = [player['last_name'], player['first_name'], player['birth_date'],
@@ -379,7 +423,14 @@ class Controller:
 
     @staticmethod
     def tournament_rounds(t_id):
-        """ Retrieve rounds of a tournament   """
+        """ Retrieve rounds of a tournament
+
+        Args:
+            t_id (int): id of a tournament to retrieve
+
+        Returns:
+            round obj: details of the rounds
+        """
         rounds = []
         tournament = db_tournament.get_rounds(t_id)
         for r in tournament:

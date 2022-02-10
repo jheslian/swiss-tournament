@@ -1,8 +1,9 @@
 """ Define player. """
+from datetime import datetime
 
 
 class Player:
-    def __init__(self, last_name: str = None, first_name: str = None, birthdate: str = None,
+    def __init__(self, last_name: str = None, first_name: str = None, birthdate: datetime = None,
                  gender: str = None, rank=0, color: str = None):
         """ Player constructor """
         self.last_name = last_name

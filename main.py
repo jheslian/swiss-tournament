@@ -5,6 +5,7 @@ from views.base import View
 
 
 def main():
+    """ Main entry"""
     view = View()
     app = Controller(view)
     app.run()

@@ -8,7 +8,11 @@ from datetime import datetime
 class View:
     # ===================================   MENU   ===================================#
     def prompt_for_main_menu(self):
-        """ prompt for main menu. """
+        """ Prompt for menu
+
+        Returns:
+            str: an option chosen from menu
+        """
         print("\n==========   Menu   ==========")
         controls = [
             ["c", "Create a tournament"],
@@ -25,13 +29,13 @@ class View:
         print(tabulate(controls, headers=["controls", "description"]))
         choices = ['c', 'p', 'lt', 'lr', 'lm', 'lp', 'ap', 'rp', 'ur']
         answer = input("choice: ")
-        if answer in choices:
-            return answer
-        elif answer == "q":
+        if answer == "q":
             return self.quit()
-        else:
+        if answer not in choices:
             print("option not found")
             return self.prompt_for_main_menu()
+
+        return answer
 
     @staticmethod
     def quit():
@@ -42,15 +46,22 @@ class View:
     # ===================================   TOURNAMENT   ===================================#
     @staticmethod
     def display_tournaments(tournaments):
-        """ Display tournaments details """
+        """ Display tournaments details
+
+        Args:
+            tournaments (list): tournament details
+        """
         print("\n==========   List of tournaments   ==========\n")
-        if tournaments:
-            print(tabulate(tournaments, headers=["name", "location", "date", "time type", "description"]))
-        else:
+        if not tournaments:
             print("\tList is empty")
+        print(tabulate(tournaments, headers=["name", "location", "date", "time type", "description"]))
 
     def prompt_create_tournament(self):
-        """ Prompt for a tournament details """
+        """ Prompt to get tournament details
+
+        Returns:
+            dict: details from user input
+        """
         print("\n======   Add a tournament   ======")
         print("----------------------------------")
         try:
@@ -59,20 +70,37 @@ class View:
             tournament_date = input("Date(dd-mm-yyyy) : ")
             time_type = input("Time type(bullet, blitz, rapid ) : ")
             description = input("Description : ")
-            no_of_players = int(input("Number of players : "))
-            no_of_rounds = int(input("Number of rounds : "))
+            no_of_players = input("Number of players(if left empty the default is 8 players) : ")
+            no_of_rounds = input("Number of rounds(if left empty the default is 4 rounds) : ")
+            if no_of_rounds:
+                no_of_rounds = int(no_of_rounds)
+            if no_of_players:
+                no_of_players = int(no_of_players)
+            errors = []
+            if not name or not location or not time_type or not tournament_date:
+                errors.append(self.custom_errors("m"))
+            if time_type and time_type.rstrip() not in ["bullet", "blitz", "rapid"]:
+                errors.append(self.custom_errors("t"))
+            print(errors)
+            if errors:
+                print("\nError :")
+                for err in errors:
+                    print("*", err)
+                return self.prompt_create_tournament()
+            t_date = datetime.strptime(tournament_date, "%d-%m-%Y")
+            details = {
+                'name': name,
+                'location': location,
+                'tournament_date': t_date,
+                'time_type': time_type,
+                'description': description,
+                'no_of_players': no_of_players,
+                'no_of_rounds': no_of_rounds
+            }
         except ValueError as err:
             print("Error: ", err)
             return self.prompt_create_tournament()
-        details = {
-            'name': name,
-            'location': location,
-            'tournament_date': tournament_date,
-            'time_type': time_type,
-            'description': description,
-            'no_of_players': no_of_players,
-            'no_of_rounds': no_of_rounds
-        }
+
         if not details:
             return None
         print("\nTournament created: ")
@@ -82,7 +110,16 @@ class View:
 
     @staticmethod
     def prompt_tournament_id(title, tournaments):
-        """ Get the tournament to play """
+        """ Get the tournament id to play with
+
+        Args:
+            title (str): prompt title
+            tournaments (tournament obj): tournaments to choose from
+
+        Returns:
+            id (int): tournament id that match from user input
+            name (str): tournament name of the id chosen
+        """
         print(f"\n======   {title}   ======")
         if tournaments is None:
             return None
@@ -105,7 +142,11 @@ class View:
 
     @staticmethod
     def display_tournament_result(players):
-        """ Display the players withe the total score of the tournament """
+        """ Display the players with the total score of the tournament
+
+        Args:
+            players (player obj): players of the tournament
+        """
         print("\n=====   Tournament results   =====")
         for player in players:
             print("Player:", player.last_name, player.first_name, " Score:", player.score)
@@ -113,14 +154,26 @@ class View:
     # ===================================   ROUND   ===================================#
     @staticmethod
     def prompt_start_round(question, round_no):
-        """ Get input to start the rounds """
+        """ Get input to start a round or discontinue the tournament
+
+        Args:
+            question (str): prompt question
+            round_no (int): number of the round
+
+        Returns:
+            str: option chosen from the question
+        """
         print(f"\n=====   Round {str(round_no)}   =====")
         res = input(question)
         return res
 
     @staticmethod
     def display_round_result(round):
-        """ Display players with the result of each round """
+        """ Display players with the result of each round
+
+        Args:
+            round (round obj): name and scores from pair of matches of a round
+        """
         for key, value in round.items():
             print(f"\n=======   {key}   =======")
             print("----------------------------")
@@ -130,7 +183,15 @@ class View:
 
     @staticmethod
     def display_tournament_rounds(tournament_name, rounds):
-        """ Display rounds of tournament"""
+        """  Display rounds of tournament
+
+        Args:
+            tournament_name (str): tournament to display
+            rounds (round obj): details of rounds
+
+        Returns:
+            str: simple print
+        """
         print(f"\n=======    List of rounds for the tournament << {tournament_name} >>   =======")
         res = []
         if rounds is None:
@@ -144,13 +205,26 @@ class View:
     # ===================================   MATCH   ===================================#
     @staticmethod
     def display_matches(matches):
+        """ Display the matches for the round
+
+        Args:
+            matches (Match): pair of players to play
+        """
         print("\n======   Matches   ======")
         for p in matches:
             print(
                 f"{p[0].last_name} {p[0].first_name} {p[0].color} vs. {p[1].last_name} {p[1].first_name} {p[1].color}")
 
     def prompt_for_match_result(self, p1, p2):
-        """ Prompt to get match result """
+        """ Prompt to get match result
+
+        Args:
+            p1 (player obj): player 1 of a match
+            p2 (player obj): player 2 of a match
+
+        Returns:
+            str: player last name
+        """
         print(f"\n======   Match : {p1.last_name} {p1.first_name} vs. {p2.last_name} {p2.first_name}  ======")
         option = [str(p1.last_name), str(p2.last_name)]
         result = input("Last name of the winner for this match(press ENTER for tie) : ")
@@ -163,15 +237,24 @@ class View:
 
     @staticmethod
     def display_match_stats(match):
-        """ Display player with the score for the current match """
+        """  Display player with the score for the current match
+
+        Args:
+            match (Match): [description]
+        """
         print(f"\n======   Match : {match.pair[0].last_name}  vs. {match.pair[1].last_name}   ======")
         print("Player :", match.pair[0].last_name, match.pair[0].first_name, " Score: ", match.pair[0].tmp_score)
         print("Player :", match.pair[1].last_name, match.pair[1].first_name, " Score: ", match.pair[1].tmp_score)
 
     @staticmethod
-    def display_tournament_matches(tournament_name, rounds):
-        """ Display matches of a tournament"""
-        print(f"\n=======    List of matches for the tournament << {tournament_name} >>   =======")
+    def display_tournament_matches(t_name, rounds):
+        """ Display matches of a tournament
+
+        Args:
+            t_name (str): tournament name to display
+            rounds (round obj): display the round with the matches
+        """
+        print(f"\n=======    List of matches for the tournament << {t_name} >>   =======")
         content = {}
         for t_round in rounds:
             for k, v in t_round.items():
@@ -180,8 +263,12 @@ class View:
 
     # ===================================   PLAYER   ===================================#
     @staticmethod
-    def get_player_name_update_rank():
-        """ Get player name """
+    def get_player_name():
+        """ Get the player name
+
+        Returns:
+            str: player name
+        """
         print("\n======   Update player rank   ======")
         print("---------------------------------------")
         name = input("\nEnter player last name : ")
@@ -191,7 +278,15 @@ class View:
 
     @staticmethod
     def get_player_id_rank_to_update(players):
-        """ Get player id and rank """
+        """ Get player id to update the rank
+
+        Args:
+            players (list): display the players to choose from
+
+        Returns:
+            int: player id to update the rank
+            int: number to replace with the previous rank
+        """
         if players:
             print(tabulate(players, headers=["id", "last name", "first name", "birthdate",
                                              "gender", "score", "ranks"]))
@@ -218,7 +313,11 @@ class View:
         return p_id, p_rank
 
     def prompt_for_player(self):
-        """Prompt to add player."""
+        """ Prompt to add player
+
+        Returns:
+            dict: player details from user input
+        """
         print("\n======   Add a player   ======")
         print("---------------------------------------")
 
@@ -258,18 +357,32 @@ class View:
 
     @staticmethod
     def custom_errors(err):
+        """ Custom errors
+
+        Args:
+            err (str): error that was triggered
+
+        Returns:
+            str: display the error message
+        """
         dict_errors = {
             "n": "Last name or first name is empty.",
             "g": "Gender must be f or m.",
-            "r": "Invalid rank"
+            "r": "Invalid rank",
+            "m": "Name, Location, tournament date and time type are mandatory fields",
+            "t": "Invalid time type"
         }
         return dict_errors[err]
 
     @staticmethod
     def display_sorted_players(title, players):
-        """ Display all sorted players details from the tournaments"""
+        """ Display all sorted players details from the tournaments
+
+        Args:
+            title (str): display in a prompt
+            players (list): player details
+        """
         print(f"\n==========   {title}   ==========")
-        if players:
-            print(tabulate(players, headers=["last name", "first name", "birthdate", "gender", "score", "ranks"]))
-        else:
+        if not players:
             print("\t\tList is empty")
+        print(tabulate(players, headers=["last name", "first name", "birthdate", "gender", "score", "ranks"]))
